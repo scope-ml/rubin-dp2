@@ -64,7 +64,7 @@ def test_period_merging_and_no_algorithm_or_rank_leakage():
         },
     )
     assert set(obj) == OBJECT_KEYS
-    np.testing.assert_allclose(obj["periods"], [2.0, 1.0001, 0.5])
+    np.testing.assert_allclose(obj["periods"], [2.0, 1.0001, 1.0, 0.5], rtol=1e-6)
     np.testing.assert_allclose(obj["cycles"], 10 / obj["periods"])
 
 

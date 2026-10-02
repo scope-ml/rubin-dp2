@@ -184,16 +184,9 @@ def build_object(
     if len(periods) == 0:
         return None
 
-    # Merge candidates that the baseline cannot distinguish: frequencies closer than half a
-    # frequency-resolution element (0.5 / baseline) are treated as the same candidate.
-    frequencies = np.sort(1.0 / periods)
-    resolution = 0.5 / max(baseline, 1.0)
-    kept = [frequencies[0]]
-    for frequency in frequencies[1:]:
-        if frequency - kept[-1] > resolution:
-            kept.append(frequency)
-
-    periods = (1.0 / np.asarray(kept)).astype(np.float32)
+    # Remove only identical periods (as stored, float32), keeping one copy of each; every other
+    # candidate is kept. Ordered by increasing frequency.
+    periods = np.unique(periods.astype(np.float32))[::-1].copy()
     return {
         "t": t.astype(np.float32),
         "band": band,

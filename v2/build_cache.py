@@ -244,6 +244,7 @@ def build_cache(
         "min_cadence_minutes": min_cadence_minutes,
         "mag_transform": mag_transform,
         "scale_kind": scale_kind,
+        "candidate_periods": "exact duplicates removed",
     }
     out_dir.mkdir(parents=True)
     pending = []
