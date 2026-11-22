@@ -61,23 +61,23 @@ Machine-learning classifications are not counted.
 
 Light curves folded at their period and shown over two cycles, in AB magnitudes in the six Rubin bands.
 
+<img src="images/cyclotron.png" width="500">
+
+<img src="images/rrab.png" width="500">
+
+<img src="images/rrc.png" width="500">
+
+<img src="images/zzceti.png" width="500">
+
 <img src="images/ew.png" width="500">
 
 <img src="images/eb.png" width="500">
 
 <img src="images/ea.png" width="500">
 
-<img src="images/rrab.png" width="500">
-
-<img src="images/rrc.png" width="500">
-
 <img src="images/dsct.png" width="500">
 
 <img src="images/rscvn.png" width="500">
-
-<img src="images/zzceti.png" width="500">
-
-<img src="images/cyclotron.png" width="500">
 
 ## Citation
 
