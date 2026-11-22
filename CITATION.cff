@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+message: "If you use this software or the DP2 labels and periods, please cite it as below."
+title: "Rubin DP2: classifier code and labels"
+authors:
+  - family-names: Agrawal
+    given-names: Atal
+repository-code: "https://github.com/scope-ml/rubin-dp2"
+references:
+  - type: article
+    title: "The Rubin Source Classification Project: I. Period Estimation and Recognition of Variable Stars in Data Preview 2"
+    authors:
+      - family-names: Agrawal
+        given-names: Atal
+      - name: "et al."
+    status: in-preparation
