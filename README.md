@@ -7,6 +7,28 @@ Code for the Rubin Data Preview 2 (DP2) variable-star work.
 | `classifier/` | the DP2 variable-star classifier: self-supervised pretraining code (`v1/`, `v2/`); see its README |
 | `labels/` | `pull_dp2_labels.py`, which pulls the current DP2 classifications and periods from Orcus (below) |
 
+## Some examples of variable stars found in DP2
+
+Light curves folded at their period and shown over two cycles, in AB magnitudes in the six Rubin bands.
+
+<table>
+  <tr>
+    <td><img src="images/ew.png" width="300"></td>
+    <td><img src="images/eb.png" width="300"></td>
+    <td><img src="images/ea.png" width="300"></td>
+  </tr>
+  <tr>
+    <td><img src="images/rrab.png" width="300"></td>
+    <td><img src="images/rrc.png" width="300"></td>
+    <td><img src="images/dsct.png" width="300"></td>
+  </tr>
+  <tr>
+    <td><img src="images/rscvn.png" width="300"></td>
+    <td><img src="images/zzceti.png" width="300"></td>
+    <td><img src="images/cyclotron.png" width="300"></td>
+  </tr>
+</table>
+
 ## DP2 labels and periods
 
 `labels/pull_dp2_labels.py` downloads the current classifications and periods of Rubin DP2 objects from
