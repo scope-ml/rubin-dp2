@@ -13,10 +13,13 @@ Output (default): dp2_variables.csv and dp2_transients.csv, columns
     class            majority class; each person counts once (their latest classification). Classes tied at the
                      top are all listed, separated by "; "
     votes            how many people chose the class, out of how many classified the object, e.g. "2 of 3"
-    classifications  every person's latest classification as author:class:probability, separated by "; "
     period           the set period in days: the "period" field of the object's annotation named "period".
                      Empty unless the class is periodic
     groups           the Orcus DP2 group(s) the object is in
+    author_1, classification_1, probability_1, author_2, ...
+                     every person's latest classification, one set of three columns per person (those agreeing
+                     with the majority class first, then by probability); as many sets as the most-classified object
+                     in the file needs, empty for objects with fewer
 
 You need an Orcus account that is a member of the group(s); a group you cannot access is skipped with a note.
 Only the Python standard library is needed (pyarrow for --format parquet).
@@ -40,7 +43,11 @@ PERIOD_ORIGIN = "period"
 # Branches of the taxonomy whose classes carry a period, plus one periodic class that sits under CV.
 PERIODIC_BRANCHES = {"periodic", "pulsator", "binary star"}
 PERIODIC_EXTRA = {"Cyclotron emitting magnetic white dwarf"}
-COLUMNS = ["id", "ra", "dec", "class", "votes", "classifications", "period", "groups"]
+COLUMNS = ["id", "ra", "dec", "class", "votes", "period", "groups"]
+
+
+def person_columns(n):
+    return [f"{c}_{i}" for i in range(1, n + 1) for c in ("author", "classification", "probability")]
 
 
 def api(token, path, params=None):
@@ -100,15 +107,20 @@ def object_row(src, taxonomy_ids, periodic, min_prob, exclude):
                        and isinstance(a["data"].get("period"), (int, float))]
         if with_period:
             period = latest(with_period, "modified")["data"]["period"]
-    return {
+    row = {
         "id": src["id"], "ra": src["ra"], "dec": src["dec"],
         "class": "; ".join(winners),
         "votes": f"{top} of {len(calls)}",
-        "classifications": "; ".join(
-            f"{p}:{c['classification']}:{c.get('probability')}" for p, c in sorted(calls.items())),
         "period": period,
         "groups": "",
     }
+    order = sorted(calls.items(), key=lambda pc: (pc[1]["classification"] not in winners,
+                                                  -(pc[1].get("probability") or 0), pc[0]))
+    for i, (p, c) in enumerate(order, 1):
+        row[f"author_{i}"] = p
+        row[f"classification_{i}"] = c["classification"]
+        row[f"probability_{i}"] = c.get("probability")
+    return row
 
 
 def group_sources(token, gid):
@@ -122,16 +134,23 @@ def group_sources(token, gid):
 
 
 def write(rows, path, fmt):
+    n = max([sum(k.startswith("author_") for k in r) for r in rows], default=1)
+    cols = COLUMNS + person_columns(n)
     if fmt == "csv":
         with open(path, "w", newline="") as f:
-            w = csv.DictWriter(f, fieldnames=COLUMNS)
+            w = csv.DictWriter(f, fieldnames=cols)
             w.writeheader()
             w.writerows(rows)
     else:
         import pyarrow as pa
         import pyarrow.parquet as pq
-        pq.write_table(pa.Table.from_pylist(rows, schema=pa.schema(
-            [(c, pa.float64() if c in ("ra", "dec") else pa.string()) for c in COLUMNS])), path)
+        types = {c: pa.float64() if c in ("ra", "dec") or c.startswith("probability_") else pa.string() for c in cols}
+        clean = [{c: (None if r.get(c) == "" else r.get(c)) for c in cols} for r in rows]
+        for r in clean:
+            for c in cols:
+                if r[c] is not None and types[c] == pa.string():
+                    r[c] = str(r[c])
+        pq.write_table(pa.Table.from_pylist(clean, schema=pa.schema(list(types.items()))), path)
 
 
 def main():

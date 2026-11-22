@@ -51,9 +51,9 @@ Only the Python standard library is needed (`pyarrow` for `--format parquet`).
 | `ra`, `dec` | position in degrees |
 | `class` | majority class: each person counts once (their latest classification); classes tied at the top are all listed, separated by `; ` |
 | `votes` | how many people chose the class, out of how many classified the object, e.g. `2 of 3` |
-| `classifications` | every person's latest classification as `author:class:probability`, separated by `; ` |
 | `period` | the set period in days (the `period` field of the object's annotation named `period` on Orcus); empty unless the class is periodic (pulsators, binary stars, the periodic branch and cyclotron-emitting magnetic white dwarfs) |
 | `groups` | the Orcus DP2 group(s) the object is in |
+| `author_1`, `classification_1`, `probability_1`, `author_2`, ... | every person's latest classification, one set of three columns per person (those agreeing with the majority class first, then by probability); there are as many sets as the most-classified object in the file needs, empty for objects with fewer |
 
 Machine-learning classifications are not counted.
 
